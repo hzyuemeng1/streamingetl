@@ -17,6 +17,6 @@ trait generatorSchema {
     this.schema = schema
   }
 
-  def generateSchema(content:inferInformation)
+  def generateSchema(content:inferInformation): generatorSchema
 
 }

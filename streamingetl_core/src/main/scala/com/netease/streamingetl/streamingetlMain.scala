@@ -1,73 +1,112 @@
 package com.netease.streamingetl
 
-import java.util._
 
-
-import com.netease.streamingetl.internal.Logging
+import com.netease.streamingetl.schema.{inferInformation, JsonSchemaGenerator}
 import kafka.serializer.StringDecoder
-import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
 
-import org.apache.spark.sql.{SaveMode, SparkSession}
+import org.apache.spark.sql.{persiteDB, SaveMode, SparkSession}
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.kafka.KafkaUtils
 import org.apache.spark.streaming.{StreamingContext, Seconds}
 
 /**
   * Created by hzyuemeng1 on 2016/10/26.
+  *
+  * start streaming etl programm to etl json data which store in kafka to hive in real time
+  *bin/spark-submit --master local[40] --driver-memory 2g --class
+  * com.netease.streamingetl.streamingetlMain /home/ds/jars/streamingetl_core-1.0-SNAPSHOT.jar
+  * db-180.photo.163.org:9092
+  * json_test
+  * file:///home/ds/ym/sample.json
+  * json_tmp4
+  *
+  * db-180.photo.163.org:9092  brokerlist for which broker will be connected
+  * json_test  topic name for which topic in kafka will be poll data
+  * file:///home/ds/ym/sample.json  a sample json file for generator a schema and sample data ,this arg also can be json string
+  * json_tmp4 table name,persist the schema with this name in db,we can access later.
+  *
+  * Notes:for this streamingetl ,user just give the etl logical with sql in two tables,one table in generate by streming source,one is the actual table we want
+  * in hive.
   */
 object streamingetlMain {
   def main(args: Array[String]) {
     if (args.length < 4) {
-      System.err.println("Usage: streamingetlMain <zkQuorum> <group> <topics> <numThreads>")
+      System.err.println("Usage: streamingetlMain <brokerList> <topics> <path> <origin_table_name>")
       System.exit(1)
     }
 
-    StreamingExamples.setStreamingLogLevels()
-    val Array(brokerlist,topics) = args
+    val Array(brokerlist,topics,path,origin_table_name) = args
+
+
+    //config this streamingetl to get the spark session and streamingcontext
+
     val conf = new SparkConf()
     val spark = SparkSession.builder().appName("streamingetl-demo").config(conf).enableHiveSupport().getOrCreate()
-    val  ssc = StreamingContext.getActiveOrCreate(() => new StreamingContext(spark.sparkContext,Seconds(120)))
+    val  ssc = StreamingContext.getActiveOrCreate(() => new StreamingContext(spark.sparkContext,Seconds(20)))
+    val topicsSet = topics.split(",").toSet
+    val kafkaParams = Map[String, String]("metadata.broker.list" -> brokerlist,
+      "zookeeper.connect" -> "db-180.photo.163.org:2182",
+      "group.id" -> "consumergroup",
+      "serializer.class" -> "kafka.serializer.StringEncoder")
 
-    // first,use we will be create a partition table use spark sql which hive also can see it
+    // generator schema and samle data by path or json string
+    println("-------- step 1 >> start to generator schema and samle data by path or json string ----")
+    val Jsonschemahandler = new JsonSchemaGenerator(spark)
+    val infer = inferInformation(true,true,path) // here ,we can also use json string for genedate schema and sample data ,jus constructor inferInformation(false,true,jsonstring)
 
-    spark.sql("CREATE TABLE user_partitioned (use String,money Double) PARTITIONED BY (city STRING,phone STRING);")
+    val generator = Jsonschemahandler.generateSchema(infer)
+    val schema =  generator.getSchema
+    println("******************* start to print schema *********************")
+    println(schema.treeString)
+    println("******************* end to print schema *********************")
+    val sampleData = generator.getShowData
+    println("******************* start to print sampleData *********************")
+    println(sampleData)
+    println("******************* end to print sampleData *********************")
+
+    println("-------- end to generator schema and samle data by path or json string ----")
+
+   // persist the schema to db with sepcificed the given name
+
+    println("--------- step 2 >>  start  persist the schema to db with sepcificed the given name -------------")
+   val dbHandler =  new persiteDB(spark,Option(schema))
+    dbHandler.saveSchmaToDB(origin_table_name)
+
+    println("--------- end  persist the schema to db with sepcificed the given name -------------")
+    // we will be create a partition table use spark sql which hive also can see it
+
+    spark.sql("DROP TABLE IF EXISTS user_partitioned")
+    spark.sql("CREATE TABLE IF NOT EXISTS user_partitioned (user String,money Double) PARTITIONED BY (city STRING,phone STRING)")
 
     // then we config dynamic partition to insert data which we receive from kafka and etl it
 
     spark.sql("SET hive.exec.dynamic.partition=true")
-    spark.sql("hive.exec.dynamic.partition.mode=nonstrict")
-    spark.sql("hive.exec.max.dynamic.partitions.pernode = 1000")
-    spark.sql("hive.exec.max.dynamic.partitions=1000")
+    spark.sql("SET hive.exec.dynamic.partition.mode=nonstrict")
+    spark.sql("SET hive.exec.max.dynamic.partitions.pernode = 1000")
+    spark.sql("SET hive.exec.max.dynamic.partitions=1000")
 
-    //create data stream use spark to receive data from kafka
-    val topicsSet = topics.split(",").toSet
-    val kafkaParams = Map[String, String](
-      "metadata.broker.list" -> brokerlist, "serializer.class" -> "kafka.serializer.StringEncoder")
-    val messages = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
-      ssc, kafkaParams, topicsSet).repartition(200)
+    // get the origin data streaming source use spark to receive data from kafka
+    val messages = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](ssc,kafkaParams,topicsSet).repartition(200)
     val ds: DStream[String]= messages.map(_._2)
 
-    // the etl the data to get the vauleable data we want,the sync to hive table we firsr create
+    println("-----------  step 3 >> etl the data to get the vauleable data we want,then sync to hive table we first create       -------------------")
+    // then etl the data to get the vauleable data we want,then sync to hive table we first create
 
     ds.foreachRDD{
+
       rdd => {
         val df = spark.read.json(rdd)
        // etl data
-        df.write.insertInto("b") //receive data to tmp file
-        // etl the data
-        val tmp = spark.sql("select * from xxxx")
-        // append data to hive table
-        tmp.write.mode(SaveMode.Append).insertInto("c")
-        // insert into hive table we create before
-
+        df.write.format("json").mode(SaveMode.Append).insertInto(origin_table_name) //receive data to tmp file
+        // auto etl the data to hive parition table,use sql logical for etl one table to another table
+        val tmp = spark.sql(s"insert into table user_partitioned PARTITION (city,phone) select body.user,body.money,body.city AS city,body.phone AS phone from $origin_table_name distribute by city,phone")
       }
     }
 
+   println("---------  step 4 >>   start the streaming programm ---------------")
+    //start the streaming programm
 
-
-
-    val dstream =
     ssc.start()
     ssc.awaitTermination()
   }
@@ -76,18 +115,3 @@ object streamingetlMain {
 
 
 
-/** Utility functions for Spark Streaming examples. */
-object StreamingExamples extends Logging {
-
-  /** Set reasonable logging levels for streaming if the user has not configured log4j. */
-  def setStreamingLogLevels() {
-    val log4jInitialized = Logger.getRootLogger.getAllAppenders.hasMoreElements
-    if (!log4jInitialized) {
-      // We first log something to initialize Spark's default logging, then we override the
-      // logging level.
-      logInfo("Setting log level to [WARN] for streaming example." +
-        " To override add a custom log4j.properties to the classpath.")
-      Logger.getRootLogger.setLevel(Level.WARN)
-    }
-  }
-}

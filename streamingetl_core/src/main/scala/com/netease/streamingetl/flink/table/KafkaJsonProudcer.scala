@@ -10,21 +10,28 @@ import scala.util.Random
 
 /**
   * Created by hzyuemeng1 on 2016/10/27.
+  *  java -cp streamingetl_core-1.0-SNAPSHOT.jar:kafka_2.11-0.9.0.1.jar:
+  *  kafka-clients-0.9.0.1.jar:scala-library-2.11.7.jar:zookeeper-3.4.6.jar:
+  *  org.apache.sling.commons.json-2.0.16.jar:scala-library-2.11.7.jar:
+  *  slf4j-api-1.7.6.jar:log4j-1.2.17.jar:metrics-core-2.2.0.jar
+  *  com.netease.streamingetl.flink.table.KafkaJsonProudcer
+  *  db-180.photo.163.org:9092 brokerlist
+  *  json_test  topic
+  *  5000 the data send interval
   */
-object KafkaProudcer {
+object KafkaJsonProudcer {
   def main(args: Array[String]) {
-    var topic = "test_json"
-    var brokerList = "db-180.photo.163.org:9092"
-    var interval :Long= 500
-    if (args.length != 0) {
-      val Array(topic,brokerList,interval) = args
+    if(args.length != 2) {
+      println("Wrong use")
     }
+   val Array(brokerList,topic,interval) = args
 
     val props1 = new Properties()
     props1.put("metadata.broker.list", brokerList)
     props1.put("serializer.class", "kafka.serializer.StringEncoder")
     props1.put("key.serializer","org.apache.kafka.common.serialization.StringSerializer")
     props1.put("value.serializer","org.apache.kafka.common.serialization.StringSerializer")
+    props1.put("zookeeper.connect","db-180.photo.163.org:2182")
 
     val kafkaConfig = new ProducerConfig(props1)
     val producer = new Producer[String,String](kafkaConfig)
@@ -38,7 +45,7 @@ object KafkaProudcer {
       producer.send(new KeyedMessage[String, String](topic, event.toString))
       println("Message sent: " + event)
 
-      Thread.sleep(interval)
+      Thread.sleep(interval.toInt)
     }
   }
 
@@ -58,7 +65,7 @@ object KafkaProudcer {
     jObj.put("ip",ip)
     jObj.put("hostname",hostname)
     val phone_type = Array[String]("huawei","apple","xiaomi","oppo","vivio","other")
-    val phone = phone(sed.nextInt(phone_type.length))
+    val phone  = phone_type(sed.nextInt(phone_type.length))
     val body = Map("user" -> user_name, "city" -> city_name,"money" -> money,"phone" ->phone)
     jObj.put("body",body.asJava)
     jObj

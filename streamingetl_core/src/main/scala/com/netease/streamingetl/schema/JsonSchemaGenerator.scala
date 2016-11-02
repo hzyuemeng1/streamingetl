@@ -23,7 +23,7 @@ class JsonSchemaGenerator(sparksession:SparkSession) extends generatorSchema{
     }
   }
 
-  override def generateSchema(infer: inferInformation) = {
+  override def generateSchema(infer: inferInformation) :JsonSchemaGenerator= {
     infer match {
       case inferInformation(true,isShow,path) => {
         val df = sparksession.read.json(path)
@@ -40,7 +40,7 @@ class JsonSchemaGenerator(sparksession:SparkSession) extends generatorSchema{
         func(isShow,df)
     }
     }
-
+    this
   }
 
   def getShowData:String = sampleData

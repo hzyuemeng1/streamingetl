@@ -25,11 +25,17 @@
         <module name="dcc" />
         <module name="jobserver" />
         <module name="streamingetl" />
-        <module name="streamingetl_core" />
         <module name="streamingetl_jobserver" />
         <module name="test" />
         <module name="tools" />
         <module name="webserver" />
+      </profile>
+      <profile default="false" name="Annotation profile for streamingetl_core" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="streamingetl_core" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -41,7 +47,7 @@
       <module name="streamingetl-dcc_2.10" target="1.5" />
       <module name="streamingetl-parent" target="1.5" />
       <module name="streamingetl-tools" target="1.5" />
-      <module name="streamingetl_core" target="1.5" />
+      <module name="streamingetl_core" target="1.8.0_51" />
       <module name="streamingetl_jobserver" target="1.5" />
       <module name="test" target="1.5" />
       <module name="tools" target="1.5" />
