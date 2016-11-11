@@ -66,25 +66,35 @@
     <orderEntry type="library" name="Maven: aopalliance:aopalliance:1.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.flink:flink-java:1.1.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.flink:flink-optimizer_2.10:1.1.3" level="project" />
-    <orderEntry type="library" name="Maven: org.scalamacros:quasiquotes_2.10:2.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.flink:flink-streaming-scala_2.10:1.1.3" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.flink:flink-streaming-java_2.10:1.1.3" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.sling:org.apache.sling.commons.json:2.0.6" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.flink:flink-clients_2.10:1.1.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.flink:flink-runtime_2.10:1.1.3" level="project" />
-    <orderEntry type="library" name="Maven: org.javassist:javassist:3.18.2-GA" level="project" />
     <orderEntry type="library" name="Maven: com.typesafe.akka:akka-actor_2.10:2.3.7" level="project" />
-    <orderEntry type="library" name="Maven: com.typesafe:config:1.2.1" level="project" />
     <orderEntry type="library" name="Maven: com.typesafe.akka:akka-remote_2.10:2.3.7" level="project" />
-    <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:2.5.0" level="project" />
-    <orderEntry type="library" name="Maven: org.uncommons.maths:uncommons-maths:1.2.2a" level="project" />
     <orderEntry type="library" name="Maven: com.typesafe.akka:akka-slf4j_2.10:2.3.7" level="project" />
     <orderEntry type="library" name="Maven: org.clapper:grizzled-slf4j_2.10:1.0.2" level="project" />
     <orderEntry type="library" name="Maven: com.github.scopt:scopt_2.10:3.2.0" level="project" />
+    <orderEntry type="library" name="Maven: com.twitter:chill_2.10:0.7.4" level="project" />
+    <orderEntry type="library" name="Maven: org.scalamacros:quasiquotes_2.10:2.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.flink:flink-streaming-scala_2.11:1.1.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.flink:flink-streaming-java_2.11:1.1.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.sling:org.apache.sling.commons.json:2.0.6" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.flink:flink-scala_2.11:1.1.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.flink:flink-connector-kafka-0.9_2.11:1.1.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.flink:flink-connector-kafka-base_2.11:1.1.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.flink:flink-clients_2.11:1.1.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.flink:flink-runtime_2.11:1.1.3" level="project" />
+    <orderEntry type="library" name="Maven: org.javassist:javassist:3.18.2-GA" level="project" />
+    <orderEntry type="library" name="Maven: com.typesafe.akka:akka-actor_2.11:2.3.7" level="project" />
+    <orderEntry type="library" name="Maven: com.typesafe:config:1.2.1" level="project" />
+    <orderEntry type="library" name="Maven: com.typesafe.akka:akka-remote_2.11:2.3.7" level="project" />
+    <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:2.5.0" level="project" />
+    <orderEntry type="library" name="Maven: org.uncommons.maths:uncommons-maths:1.2.2a" level="project" />
+    <orderEntry type="library" name="Maven: com.typesafe.akka:akka-slf4j_2.11:2.3.7" level="project" />
+    <orderEntry type="library" name="Maven: org.clapper:grizzled-slf4j_2.11:1.0.2" level="project" />
+    <orderEntry type="library" name="Maven: com.github.scopt:scopt_2.11:3.2.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.zookeeper:zookeeper:3.4.6" level="project" />
     <orderEntry type="library" name="Maven: jline:jline:0.9.94" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:3.8.1" level="project" />
-    <orderEntry type="library" name="Maven: com.twitter:chill_2.10:0.7.4" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.flink:flink-optimizer_2.11:1.1.3" level="project" />
     <orderEntry type="library" name="Maven: commons-cli:commons-cli:1.3.1" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:14.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.spark:spark-core_2.11:2.0.1" level="project" />

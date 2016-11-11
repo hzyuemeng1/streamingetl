@@ -1,14 +1,12 @@
-package com.netease.streamingetl
+package org.apache.spark.sql.execution.command
 
-
-import com.netease.streamingetl.schema.{inferInformation, JsonSchemaGenerator}
+import com.netease.streamingetl.schema.{JsonSchemaGenerator, inferInformation}
 import kafka.serializer.StringDecoder
 import org.apache.spark.SparkConf
-
-import org.apache.spark.sql.{persiteDB, SaveMode, SparkSession}
+import org.apache.spark.sql.{SaveMode, SparkSession, persiteDB}
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.kafka.KafkaUtils
-import org.apache.spark.streaming.{StreamingContext, Seconds}
+import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 /**
   * Created by hzyuemeng1 on 2016/10/26.
@@ -29,7 +27,7 @@ import org.apache.spark.streaming.{StreamingContext, Seconds}
   * Notes:for this streamingetl ,user just give the etl logical with sql in two tables,one table in generate by streming source,one is the actual table we want
   * in hive.
   */
-object streamingetlMain {
+object streamingetlMain3 {
   def main(args: Array[String]) {
     if (args.length < 4) {
       System.err.println("Usage: streamingetlMain <brokerList> <topics> <path> <origin_table_name>")

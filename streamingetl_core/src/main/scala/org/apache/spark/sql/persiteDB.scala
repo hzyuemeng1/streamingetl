@@ -5,6 +5,8 @@ import org.apache.spark.sql.catalyst.TableIdentifier
 import org.apache.spark.sql.streamingetl.execution.command.{DropDatabaseCommand, CreateDataSourceTableCommand, CreateDatabaseCommand}
 import org.apache.spark.sql.types.StructType
 
+import scala.collection.mutable
+
 /**
   * Created by hzyuemeng1 on 2016/10/25.
   */
@@ -48,4 +50,11 @@ class persiteDB(spark:SparkSession,schema:Option[StructType]) {
   }
 
 
+
+  def saveETLLoigcal(val sql:String)
+
+}
+class eltContainer(appName:String){
+
+  def submitJob(job_type:String,app_Name:String,job:Job)
 }
